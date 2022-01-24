@@ -1,1 +1,1 @@
-web: python lrs.py
+web: python lrsserver.py
