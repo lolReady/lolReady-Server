@@ -1,4 +1,4 @@
-from socket import socket
+import os
 import eventlet
 import socketio
 
@@ -31,4 +31,4 @@ def forward(sid):
 
 
 if __name__ == "__main__":
-    eventlet.wsgi.server(eventlet.listen(('', 6543)), app)
+    eventlet.wsgi.server(eventlet.listen(('', os.environ["PORT"])), app)
