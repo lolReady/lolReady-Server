@@ -5,7 +5,6 @@ import socketio
 
 from aiohttp import web
 
-
 sio = socketio.AsyncServer(cors_allowed_origins=["*"])
 app = web.Application()
 sio.attach(app)
