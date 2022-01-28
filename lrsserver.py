@@ -1,3 +1,4 @@
+import os
 import coloredlogs
 import logging
 import asyncio
@@ -64,5 +65,5 @@ async def logout(*args, **kwargs):
 
 
 if __name__ == "__main__":
-    web.run_app(app)
+    web.run_app(app, port=os.environ["PORT"])
     #eventlet.wsgi.server(eventlet.listen(('', int(os.environ["PORT"]))), app)
