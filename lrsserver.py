@@ -26,17 +26,16 @@ async def disconnect(sid):
 
 @sio.event
 async def login(*args, **kwargs):
-    # TODO check sid in room
     sid, data = args
-    response = {"data": data, "error": None}
+    response = {**data, "error": None}
 
     try:
-        print(type(data["room"]))
         sio.enter_room(sid, data["room"])
         logging.info(
-            f"LRS_SERVER:LOGIN - SID[{sid}] entered to {data['room']}- ALLOWED")
+            f"LRS_SERVER:LOGIN - [{sid}] entered to [{data['room']}]")
     except Exception as e:
-        logging.info(f"LRS_SERVER:LOGIN - SID[{sid}] - DENIED")
+        logging.info(
+            f"LRS_SERVER:LOGIN - [{sid}] not entered to [{data['room']}]")
         response["error"] = str(e)
 
     await sio.emit("login_resp", response, to=sid)
@@ -44,9 +43,8 @@ async def login(*args, **kwargs):
 
 @sio.event
 async def logout(*args, **kwargs):
-    # TODO check sid in room
     sid, data = args
-    response = {"data": data, "error": None}
+    response = {**data, "error": None}
 
     try:
         sio.leave_room(sid, data["room"])
@@ -62,8 +60,15 @@ async def logout(*args, **kwargs):
 @sio.event
 async def ping(*args, **kwargs):
     sid, data = args
-    response = {"data": data, "error": None}
-    logging.info(f"LRS_SERVER:PING - SID[{sid}] to {data['room']}")
+    logging.info(
+        f"LRS_SERVER:PING:{data['method']}:{data['action']} - [{sid}] to [{data['room']}]")
+    await sio.emit("ping", data, room=data["room"], skip_sid=sid)
+
+
+@sio.event
+async def ping_resp(*args, **kwargs):
+    sid, data = args
+    response = {**data}
     await sio.emit("ping_resp", response, room=data["room"], skip_sid=sid)
 
 
