@@ -1,3 +1,4 @@
+from cmath import log
 import os
 import coloredlogs
 import logging
@@ -6,7 +7,8 @@ import socketio
 
 from aiohttp import web
 
-sio = socketio.AsyncServer(cors_allowed_origins=["*"])
+sio = socketio.AsyncServer(cors_allowed_origins=[
+                           "*", "localhost", "127.0.0.1"])
 app = web.Application()
 sio.attach(app)
 
@@ -61,7 +63,7 @@ async def logout(*args, **kwargs):
 async def ping(*args, **kwargs):
     sid, data = args
     logging.info(
-        f"LRS_SERVER:PING:{data['method']}:{data['action']} - [{sid}] to [{data['room']}]")
+        f"LRS_SERVER:PING:{data['method']}:{data['endpoint']} - [{sid}] to [{data['room']}]")
     await sio.emit("ping", data, room=data["room"], skip_sid=sid)
 
 
@@ -69,7 +71,33 @@ async def ping(*args, **kwargs):
 async def ping_resp(*args, **kwargs):
     sid, data = args
     response = {**data}
+    print(response)
     await sio.emit("ping_resp", response, room=data["room"], skip_sid=sid)
+
+
+@sio.event
+async def subscribe(*args, **kwargs):
+    sid, data = args
+    await sio.emit("subscribe", data, room=data["room"], skip_sid=sid)
+
+
+@sio.event
+async def subscribe_resp(*args, **kwargs):
+    sid, data = args
+    print(data)
+    await sio.emit("subscribe_resp", data, room=data["room"], skip_sid=sid)
+
+
+@sio.event
+async def unsubscribe(*args, **kwargs):
+    sid, data = args
+    await sio.emit("unsubscribe", data, room=data["room"], skip_sid=sid)
+
+
+@sio.event
+async def unsubscribe_resp(*args, **kwargs):
+    sid, data = args
+    await sio.emit("unsubscribe_resp", data, room=data["room"], skip_sid=sid)
 
 
 if __name__ == "__main__":
