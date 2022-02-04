@@ -29,7 +29,7 @@ async def disconnect(sid):
 @sio.event
 async def login(*args, **kwargs):
     sid, data = args
-    response = {**data, "error": None}
+    response = {"data": data, "error": None}
 
     try:
         sio.enter_room(sid, data["room"])
@@ -46,7 +46,7 @@ async def login(*args, **kwargs):
 @sio.event
 async def logout(*args, **kwargs):
     sid, data = args
-    response = {**data, "error": None}
+    response = {"data": data, "error": None}
 
     try:
         sio.leave_room(sid, data["room"])
@@ -78,6 +78,8 @@ async def ping_resp(*args, **kwargs):
 @sio.event
 async def subscribe(*args, **kwargs):
     sid, data = args
+    logging.info(f"LRS_SERVER:SUBSCRIBE - SID[{sid}] - {data}")
+    print("YAYYYY", data.keys())
     await sio.emit("subscribe", data, room=data["room"], skip_sid=sid)
 
 
@@ -91,6 +93,8 @@ async def subscribe_resp(*args, **kwargs):
 @sio.event
 async def unsubscribe(*args, **kwargs):
     sid, data = args
+    logging.info(f"LRS_SERVER:UNSUBSCRIBE - SID[{sid}] - {data}")
+    print("YAYYYY", data.keys())
     await sio.emit("unsubscribe", data, room=data["room"], skip_sid=sid)
 
 
