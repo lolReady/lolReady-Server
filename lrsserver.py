@@ -1,3 +1,4 @@
+from cmath import log
 import os
 from pprint import pprint
 import coloredlogs
@@ -7,8 +8,7 @@ import socketio
 
 from aiohttp import web
 
-sio = socketio.AsyncServer(cors_allowed_origins=[
-                           "*", "localhost", "127.0.0.1"])
+sio = socketio.AsyncServer(cors_allowed_origins=["*"])
 app = web.Application()
 sio.attach(app)
 
@@ -23,6 +23,7 @@ def connect(sid, environ, auth):
 
 @sio.event
 async def disconnect(sid):
+    print("DISCONNECTED", sid)
     logging.info(f"LRS_SERVER<DISCONNECT> - {sid} - DISCONNECTED")
 
 
