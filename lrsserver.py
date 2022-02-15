@@ -23,7 +23,6 @@ def connect(sid, environ, auth):
 
 @sio.event
 async def disconnect(sid):
-    print("DISCONNECTED", sid)
     logging.info(f"LRS_SERVER<DISCONNECT> - {sid} - DISCONNECTED")
 
 
